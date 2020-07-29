@@ -14,7 +14,7 @@ const Auth = (props) => {
             elementType: 'input',
             elementConfig: {
                 type: 'email',
-                placeholder: "EMail Address"
+                placeholder: "Email Address"
             },
             value: '',
             validation: {
@@ -40,13 +40,28 @@ const Auth = (props) => {
         }
     });
 
+    //Login / Registration modes
     const [isSignup, setIsSignup] = useState(true);
 
+    useEffect(() => {
+        if(!props.building && props.authRedirectPath !== '/') {
+            props.setAuthRedirectPath('/');
+        }
+    }, []);
 
+    //If already authorized, return to the page the user came from
+    if(props.isAuth) {
+        return <Redirect to={props.authRedirectPath} />
+    }
+    
+    const switchAuthModeHandler = () => {
+        setIsSignup(prevState => !prevState);
+    }
+
+    //Handles any change in input
     const inputChangedHandler = (event, controlName) => {
-
         const updatedControls = updateObject(authForm, {
-            [controlName]: updateObject(...authForm[controlName], {
+            [controlName]: updateObject(authForm[controlName], {
                 value: event.target.value,
                 valid: checkValidity(event.target.value, authForm[controlName].validation),
                 touched: true
@@ -60,21 +75,7 @@ const Auth = (props) => {
         props.onAuth(authForm.email.value, authForm.password.value, isSignup);
     }
 
-    const switchAuthModeHandler = () => {
-        setIsSignup(prevState => !prevState.isSignup);
-    }
-
-    useEffect(() => {
-        if(!props.building && props.authRedirectPath !== '/') {
-            props.setAuthRedirectPath('/');
-        }
-    }, [])
-
-
-    if(props.isAuth) {
-        return <Redirect to={props.authRedirectPath} />
-    }
-
+    //Sets id as the name of the input, and config as the rest of the input's configuration
     const formElementsArray = [];
     for (let key in authForm) {
         formElementsArray.push({
@@ -114,7 +115,7 @@ const Auth = (props) => {
                 {form}
                 <Button btnType="Success">Submit</Button> 
             </form>
-            <Button clicked={switchAuthModeHandler} btnType="Danger">Switch to {isSignup? "Sign In": "Sign Up"}</Button>
+            <Button clicked={switchAuthModeHandler} btnType="Danger">Switch to {isSignup? "Login": "Registration"}</Button>
         </div>
     )
 }

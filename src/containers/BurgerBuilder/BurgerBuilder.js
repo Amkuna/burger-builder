@@ -52,7 +52,6 @@ export const BurgerBuilder = props => {
         return sum > 0;
     }
 
-
     const purchaseHandler = () => {
         if(isAuth) {
             setPurchasing(true);
