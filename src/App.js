@@ -11,7 +11,7 @@ import Auth from './containers/Auth/Auth';
 // const asyncCheckout = asyncComponent(() => {
 //   return import('./containers/Checkout/Checkout');
 // })
-//React 16.8; Suspense???
+
 const asyncCheckout = React.lazy((() => {
   return import('./containers/Checkout/Checkout');
 }))
@@ -30,7 +30,7 @@ const App = (props) => {
 
   useEffect(() => {
     onTryAutoSignup();
-  }, [])
+  }, [onTryAutoSignup])
 
 
     let routes = (
@@ -46,7 +46,7 @@ const App = (props) => {
         <>
           <Route path="/" exact component={BurgerBuilder} />
           <Route path='/auth' component={asyncAuth} />
-          <Route path="/checkout" render={() => <asyncCheckout />} />
+          <Route path="/checkout" component={asyncCheckout} />
           <Route path='/orders' component={asyncOrders} />
           <Route path="/logout" component={Logout} />
           <Redirect to="/" />

@@ -1,6 +1,5 @@
 import React, {useState, useEffect, useCallback} from 'react';
-import {connect, useDispatch, useSelector} from 'react-redux';
-import * as actionCreators from '../../store/actions/burgerBuilder';
+import {useDispatch, useSelector} from 'react-redux';
 import Burger from '../../components/Burger/Burger';
 import BuildControls from '../../components/Burger/BuildControls/BuildControls';
 import Modal from '../../components/UI/Modal/Modal';
@@ -13,10 +12,11 @@ import * as burgerBuilderActions from '../../store/actions/index';
 export const BurgerBuilder = props => {
     const [purchasing, setPurchasing] = useState(false);
     const dispatch = useDispatch();
-
+    
+    //Object of ingredients and amounts of them used
     const ingredients = useSelector(state => {
         return state.burgerBuilder.ingredients;
-    })
+    });
 
     const totalPrice = useSelector(state => {
         return state.burgerBuilder.totalPrice;
@@ -71,12 +71,11 @@ export const BurgerBuilder = props => {
         props.history.push('/checkout');
     }
 
-    const disabledInfo = {
-        ingredients
-    };
+    const disabledInfo = {...ingredients};
 
+    //converts to an object of boolean ingredients, to check whether you can deduct ingredients
     for(let key in disabledInfo) {
-        disabledInfo[key] = disabledInfo[key] <= 0
+        disabledInfo[key] = disabledInfo[key] <= 0;
     }
 
     let orderSummary = null;
@@ -100,19 +99,22 @@ export const BurgerBuilder = props => {
         );
 
         orderSummary = (
-            <OrderSummary ingredients={ingredients}
-                            purchaseCancelled={purchaseCancelHandler}
-                            purchaseContinued={purchaseContinueHandler}
-                            price={totalPrice}
-                        />
+            <OrderSummary 
+                ingredients={ingredients}
+                purchaseCancelled={purchaseCancelHandler}
+                purchaseContinued={purchaseContinueHandler}
+                price={totalPrice}
+            />
         );
     }
 
     return (
         <>
+            {/* Show modal when in purchasing state */}
             <Modal show={purchasing} modalClosed={purchaseCancelHandler}>
                 {orderSummary}
             </Modal>
+
             {burger}
         </>
     );
