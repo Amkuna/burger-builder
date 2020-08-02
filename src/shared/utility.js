@@ -21,6 +21,7 @@ export const checkValidity = (value, rules) => {
         isValid = value.length <= rules.maxLength && isValid
     }
     if(rules.isEmail) {
+        // eslint-disable-next-line
         const pattern = /^(([^<>()\[\]\.,;:\s@\"]+(\.[^<>()\[\]\.,;:\s@\"]+)*)|(\".+\"))@(([^<>()[\]\.,;:\s@\"]+\.)+[^<>()[\]\.,;:\s@\"]{2,})$/i;
         isValid = pattern.test(value) && isValid
     }

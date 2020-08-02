@@ -32,7 +32,7 @@ export const BurgerBuilder = props => {
 
     const onIngredientAdded = (ingredient) => dispatch(burgerBuilderActions.addIngredient(ingredient));
     const onIngredientRemoved = (ingredient) => dispatch(burgerBuilderActions.removeIngredient(ingredient));
-    const onInitIngredients = useCallback(() => dispatch(burgerBuilderActions.initIngredients()), []);
+    const onInitIngredients = useCallback(() => dispatch(burgerBuilderActions.initIngredients()), [dispatch]);
     const onInitPurchase = () => dispatch(burgerBuilderActions.purchaseInit());
     const onSetAuthRedirectPath = (path) => dispatch(burgerBuilderActions.setAuthRedirectPath(path));
 

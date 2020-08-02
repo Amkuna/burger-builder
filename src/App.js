@@ -55,13 +55,13 @@ const App = (props) => {
     }
 
     return (
-      <div >
+      <>
         <Layout>
           <Switch>
             <Suspense fallback={<p>Loading...</p>}>{routes}</Suspense>
           </Switch>
         </Layout>
-      </div>
+      </>
     );
 
 }

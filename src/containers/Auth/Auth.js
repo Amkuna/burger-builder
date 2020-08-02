@@ -43,11 +43,13 @@ const Auth = (props) => {
     //Login / Registration modes
     const [isSignup, setIsSignup] = useState(true);
 
+    const {building, authRedirectPath, setAuthRedirectPath} = props;
+
     useEffect(() => {
-        if(!props.building && props.authRedirectPath !== '/') {
-            props.setAuthRedirectPath('/');
+        if(!building && authRedirectPath !== '/') {
+            setAuthRedirectPath('/');
         }
-    }, []);
+    }, [building, authRedirectPath, setAuthRedirectPath]);
 
     //If already authorized, return to the page the user came from
     if(props.isAuth) {

@@ -16,13 +16,13 @@ const Layout = props => {
     }
 
     return (
-        <>
+        <div>
             <Toolbar isAuth={props.isAuth} drawerToggleClicked={sideDrawerToggleHandler}/>
             <SideDrawer isAuth={props.isAuth} closed={sideDrawerClosedHandler} show={showSideDrawer}/>
             <main className={classes.Content}>
                 {props.children}
             </main>
-        </>
+        </div>
     )
 };
 
