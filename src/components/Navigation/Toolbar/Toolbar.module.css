@@ -1,4 +1,5 @@
 .Toolbar {
+    flex: 0 1 auto;
     height: 56px;
     width: 100%;
     position: fixed;

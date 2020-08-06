@@ -16,7 +16,7 @@ const Layout = props => {
     }
 
     return (
-        <div>
+        <div style={{height: "100vh", display: "flex", flexDirection: "column"}}>
             <Toolbar isAuth={props.isAuth} drawerToggleClicked={sideDrawerToggleHandler}/>
             <SideDrawer isAuth={props.isAuth} closed={sideDrawerClosedHandler} show={showSideDrawer}/>
             <main className={classes.Content}>

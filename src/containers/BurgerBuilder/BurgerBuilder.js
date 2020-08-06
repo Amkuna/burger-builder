@@ -83,8 +83,7 @@ export const BurgerBuilder = props => {
     
     if(ingredients) {
         burger = (
-            <>
-                <Burger ingredients={ingredients}/>
+            <div style={{display: "flex", height: "100%"}}>
                 <BuildControls 
                     ingredientAdded={onIngredientAdded}
                     ingredientRemoved={onIngredientRemoved}
@@ -94,7 +93,8 @@ export const BurgerBuilder = props => {
                     ordered={purchaseHandler}
                     isAuth={isAuth}
                 />
-            </>
+                <Burger ingredients={ingredients}/>
+            </div>
         );
 
         orderSummary = (
