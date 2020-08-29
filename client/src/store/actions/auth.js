@@ -39,7 +39,7 @@ export const checkAuthTimeout = (expirationTime) => {
     }
 }
 
-export const signIn = (email, password) => {
+export const signIn = (email, password, callback) => {
     return dispatch => {
         dispatch(authStart());
         const authData =  {
@@ -58,6 +58,7 @@ export const signIn = (email, password) => {
                 localStorage.setItem("userId", res.data.localId)
                 dispatch(authSuccess(res.data.idToken, res.data.localId));
                 dispatch(checkAuthTimeout(res.data.expiresIn));
+                callback();
             })
             .catch(err => {
                 console.log(err);

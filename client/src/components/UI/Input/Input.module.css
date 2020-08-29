@@ -21,6 +21,13 @@
     box-sizing: border-box;
 }
 
+.InputError {
+    color: red;
+    margin: 0;
+    font-size: 13px;
+    margin-left: 10px;
+}
+
 .InputElement:focus {
     outline: none;
     background-color: #ccc;

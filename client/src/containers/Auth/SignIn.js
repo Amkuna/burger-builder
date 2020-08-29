@@ -3,15 +3,26 @@ import Button from '../../components/UI/Button/Button';
 import classes from './Auth.module.css';
 import Spinner from '../../components/UI/Spinner/Spinner';
 import Input from '../../components/UI/Input/Input';
-import {updateObject, checkValidity} from '../../shared/utility';
 import {Link} from 'react-router-dom';
 import {connect} from 'react-redux';
 import * as actions from '../../store/actions/index';
+
 import {useForm} from 'react-hook-form';
+import {yupResolver} from '@hookform/resolvers';
+import * as yup from 'yup';
+
 import redirectIfAuth from '../../hoc/redirectIfAuth';
+import {compose} from 'redux';
+
+const schema = yup.object().shape({
+    email: yup.string().required("Required field").email("Please enter a valid email"),
+    password: yup.string().required("Required field")
+})
 
 const SignIn = (props) => {
-    const {register, handleSubmit, errors} = useForm();
+    const {register, handleSubmit, errors} = useForm({
+        resolver: yupResolver(schema)
+    });
 
     const authForm = {
         email: {
@@ -21,10 +32,6 @@ const SignIn = (props) => {
                 type: "email",
                 placeholder: "Email address"
             },
-            validation: {
-                required: true,
-                isEmail: true
-            },
         },
         password: {
             name: "password",
@@ -33,14 +40,11 @@ const SignIn = (props) => {
                 type: "password",
                 placeholder: "Password"
             },
-            validation: {
-                required: true
-            },
         }
     }
 
     const {building, authRedirectPath, setAuthRedirectPath} = props;
-
+    
     useEffect(() => {
         if(!building && authRedirectPath !== '/') {
             setAuthRedirectPath('/');
@@ -48,50 +52,40 @@ const SignIn = (props) => {
     }, [building, authRedirectPath, setAuthRedirectPath]);
 
 
-
     //Sets id as the name of the input, and config as the rest of the input's configuration
     const formElementsArray = [];
     for (let key in authForm) {
         formElementsArray.push({
             id: key,
-            config: authForm[key]
+            ...authForm[key]
         })
     }
 
     let form = formElementsArray.map(formElement => (
         <Input
             key={formElement.id} 
-            elementType={formElement.config.elementType} 
-            elementConfig={formElement.config.elementConfig} 
-            invalid={!formElement.config.valid}
-            touched={formElement.config.touched}
+            elementType={formElement.elementType} 
+            elementConfig={formElement.elementConfig} 
 
-            name={formElement.config.name}
+            name={formElement.name}
             register={register}
-            validation={formElement.config.validation}
-            error={errors[formElement.config.name]}
+            validation={formElement.validation}
+            error={errors[formElement.name]}
         />
     ))
     
     if(props.loading) {
-        form = <Spinner />
-    }
-
-    let errorMessage = null;
-
-    if(props.error) {
-        errorMessage = (
-            <p>{props.error.message}</p>
-        )
     }
 
     const submitHandler = (formData) => {
-        props.onAuth(formData.email, formData.password);
+        props.onAuth(formData.email, formData.password, () => {
+            props.history.push("/");
+        });
     }
 
     return (
         <div className={classes.Auth}>
-            {errorMessage}
+            {props.error && <p>{props.error.message}</p>}
             <form onSubmit={handleSubmit(submitHandler)}>
                 {form}
                 <Button btnType="Success">Sign In</Button> 
@@ -105,7 +99,6 @@ const mapStateToProps = state => {
     return {
         loading: state.auth.loading,
         error: state.auth.error,
-        isAuth: state.auth.token !== null,
         building: state.burgerBuilder.building,
         authRedirectPath: state.auth.authRedirectPath
     }
@@ -113,9 +106,12 @@ const mapStateToProps = state => {
 
 const mapDispatchToProps = dispatch => {
     return {
-        onAuth: (email, password) => dispatch(actions.signIn(email, password)),
+        onAuth: (email, password, callback) => dispatch(actions.signIn(email, password, callback)),
         onSetAuthRedirectPath: (path) => dispatch(actions.setAuthRedirectPath(path))
     }
 }
 
-export default connect(mapStateToProps, mapDispatchToProps)(redirectIfAuth(SignIn));
+export default compose (
+    connect(mapStateToProps, mapDispatchToProps),
+    redirectIfAuth
+)(SignIn);

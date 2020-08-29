@@ -30,7 +30,6 @@ const App = (props) => {
           <Route path="/" exact component={BurgerBuilder} />
           <Route path='/signin' component={asyncSignIn} />
           <Route path='/signup' component={asyncSignUp} />
-          <Redirect to="/" />
         </>
     )
 
@@ -38,11 +37,9 @@ const App = (props) => {
       routes = (
         <>
           <Route path="/" exact component={BurgerBuilder} />
-          {/* <Route path='/auth' component={asyncAuth} /> */}
           <Route path="/checkout" component={asyncCheckout} />
           <Route path='/orders' component={asyncOrders} />
           <Route path="/logout" component={Logout} />
-          <Redirect to="/" />
         </>
       )
     }

@@ -6,11 +6,23 @@ import Input from '../../components/UI/Input/Input';
 import {Link} from 'react-router-dom';
 import {connect} from 'react-redux';
 import * as actions from '../../store/actions/index';
+
 import {useForm} from 'react-hook-form';
+import {yupResolver} from '@hookform/resolvers';
+import * as yup from 'yup';
+
 import redirectIfAuth from '../../hoc/redirectIfAuth';
 
+const schema = yup.object().shape({
+    email: yup.string().required("Required field").email("Please enter a valid email"),
+    password: yup.string().required("Required field"),
+    passwordConfirm: yup.string().required("Required field").oneOf([yup.ref("password"), null], "Passwords must match")
+})
+
 const SignUp = (props) => {
-    const {register, handleSubmit, watch, errors} = useForm();
+    const {register, handleSubmit, watch, errors} = useForm({
+        resolver: yupResolver(schema)
+    });
 
     const authForm = {
         email: {
@@ -20,10 +32,6 @@ const SignUp = (props) => {
                 type: "email",
                 placeholder: "Email address"
             },
-            validation: {
-                required: true,
-                isEmail: true
-            },
         },
         password: {
             elementType: "input",
@@ -32,11 +40,6 @@ const SignUp = (props) => {
                 type: "password",
                 placeholder: "Password"
             },
-            validation: {
-                required: true,
-                minLength: 8,
-                maxLength: 20
-            },
         },
         passwordConfirm: {
             elementType: "input",
@@ -44,12 +47,6 @@ const SignUp = (props) => {
             elementConfig: {
                 type: "password",
                 placeholder: "Repeat password"
-            },
-            validation: {
-                required: true,
-                validate: value => {
-                    return value === watch("password")
-                }
             },
         }
     }
@@ -80,8 +77,6 @@ const SignUp = (props) => {
             key={formElement.id} 
             elementType={formElement.config.elementType} 
             elementConfig={formElement.config.elementConfig} 
-            invalid={!formElement.config.valid}
-            touched={formElement.config.touched}
             name={formElement.config.name}
 
             register={register}
@@ -91,25 +86,14 @@ const SignUp = (props) => {
     ))
     
     if(props.loading) {
-        form = <Spinner />
     }
-
-    let errorMessage = null;
-
-    if(props.error) {
-        errorMessage = (
-            <p>{props.error.message}</p>
-        )
-    }
-
-    console.log("ERRORS: ", errors);
 
     return (
         <div className={classes.Auth}>
-            {errorMessage}
+            {props.error && <p>{props.error.message}</p>}
             <form onSubmit={handleSubmit(submitHandler)}>
                 {form}
-                <Button btnType="Success">Sign Up</Button> 
+                <Button className={classes.SubmitBtn} btnType="Success">Sign Up</Button> 
             </form>
             <Link to="/signin">Already have an account? Sign In instead</Link>
         </div>
@@ -120,7 +104,6 @@ const mapStateToProps = state => {
     return {
         loading: state.auth.loading,
         error: state.auth.error,
-        isAuth: state.auth.token !== null,
         building: state.burgerBuilder.building,
         authRedirectPath: state.auth.authRedirectPath
     }

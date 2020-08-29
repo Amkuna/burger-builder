@@ -17,7 +17,6 @@ const Input = (props) => {
                 <input 
                     {...props.elementConfig} 
                     name={props.name} 
-                    onChange={props.onChange} 
                     className={inputClasses.join(' ')}  
                     defaultValue={props.defaultValue}
                     ref={props.register(props.validation)}
@@ -28,9 +27,7 @@ const Input = (props) => {
                 <textarea 
                     {...props.elementConfig} 
                     name={props.name}
-                    onChange={props.onChange} 
                     className={inputClasses.join(' ')}  
-                    defaultValue={props.defaultValue}
                     ref={props.register(props.validation)}
                 />
             break;
@@ -40,8 +37,6 @@ const Input = (props) => {
                     {...props.elementConfig}
                     name={props.name}
                     className={inputClasses.join(' ')}
-                    defaultValue={props.value}
-                    onChange={props.onChange}
                     ref={props.register(props.validation)}
                 >
                     {props.elementConfig.options.map(option => (
@@ -56,7 +51,6 @@ const Input = (props) => {
                     ref={props.register(props.validation)} 
                     {...props.elementConfig} onChange={props.changed} 
                     className={inputClasses.join(' ')} 
-                    defaultValue={props.defaultValue}
                 />
             )
     }
@@ -65,9 +59,12 @@ const Input = (props) => {
         <div className={classes.Input}>
             {props.label && <label className={classes.Label}>{props.label}</label>}
             {inputElement}
-            <div>
-                {props.error?.type === 'required' && "This field is required"}
-            </div>
+
+            {props.error &&
+            <p className={classes.InputError}>
+                {props.error.message}
+            </p>
+            }
         </div>
     )
 };
