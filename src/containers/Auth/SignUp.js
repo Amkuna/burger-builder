@@ -78,7 +78,6 @@ const SignUp = (props) => {
             name={formElement.config.name}
 
             register={register}
-            validation={formElement.config.validation}
             error={errors[formElement.config.name]}
         />
     ))

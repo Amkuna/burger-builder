@@ -28,14 +28,11 @@ export const fetchIngredientsFail = () => {
     }
 }
 
-export const initIngredients = () => {
-    return dispatch => {
-        axios.get("https://react-my-burger-e6262.firebaseio.com/ingredients.json")
-            .then(res => {
-                dispatch(setIngredients(res.data));
-            })
-            .catch(error => {
-                dispatch(fetchIngredientsFail());
-            })
+export const initIngredients = () => async dispatch => {
+    try {
+        const res = await axios.get("https://react-my-burger-e6262.firebaseio.com/ingredients.json")
+        dispatch(setIngredients(res.data));
+    } catch (error) {
+        dispatch(fetchIngredientsFail());
     }
 }

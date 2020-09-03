@@ -1,13 +1,7 @@
-import React, {useEffect} from 'react';
+import React from 'react';
 import Button from '../../UI/Button/Button';
 
-
 const OrderSummary = props => {
-
-    useEffect(() => {
-        console.log("[OrderSummary.js] updated")
-
-    })
 
     const ingredientSummary = Object.keys(props.ingredients)
         .map(igKey => {
@@ -23,8 +17,8 @@ const OrderSummary = props => {
             </ul>
             <p><strong>Total Price: {props.price.toFixed(2)}</strong></p>
             <p>Continue to Checkout?</p>
-            <Button btnType="Danger" clicked={props.purchaseCancelled}>CANCEL</Button>
-            <Button btnType="Success" clicked={props.purchaseContinued}>CONTINUE</Button>
+            <Button btnType="Danger" onClick={props.purchaseCancelled}>CANCEL</Button>
+            <Button btnType="Success" onClick={props.purchaseContinued}>CONTINUE</Button>
         </>
     )
 }
