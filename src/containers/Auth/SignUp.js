@@ -11,8 +11,6 @@ import {useForm} from 'react-hook-form';
 import {yupResolver} from '@hookform/resolvers';
 import * as yup from 'yup';
 
-import redirectIfAuth from '../../hoc/redirectIfAuth';
-
 const schema = yup.object().shape({
     email: yup.string().required("Required field").email("Please enter a valid email"),
     password: yup.string().required("Required field"),
@@ -20,7 +18,7 @@ const schema = yup.object().shape({
 })
 
 const SignUp = (props) => {
-    const {register, handleSubmit, watch, errors} = useForm({
+    const {register, handleSubmit, errors} = useForm({
         resolver: yupResolver(schema)
     });
 
@@ -116,4 +114,4 @@ const mapDispatchToProps = dispatch => {
     }
 }
 
-export default connect(mapStateToProps, mapDispatchToProps)(redirectIfAuth(SignUp));
+export default connect(mapStateToProps, mapDispatchToProps)(SignUp);

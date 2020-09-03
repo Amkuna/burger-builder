@@ -11,9 +11,6 @@ import {useForm} from 'react-hook-form';
 import {yupResolver} from '@hookform/resolvers';
 import * as yup from 'yup';
 
-import redirectIfAuth from '../../hoc/redirectIfAuth';
-import {compose} from 'redux';
-
 const schema = yup.object().shape({
     email: yup.string().required("Required field").email("Please enter a valid email"),
     password: yup.string().required("Required field")
@@ -23,6 +20,8 @@ const SignIn = (props) => {
     const {register, handleSubmit, errors} = useForm({
         resolver: yupResolver(schema)
     });
+
+    console.log("In SignIn.js");
 
     const authForm = {
         email: {
@@ -111,7 +110,4 @@ const mapDispatchToProps = dispatch => {
     }
 }
 
-export default compose (
-    connect(mapStateToProps, mapDispatchToProps),
-    redirectIfAuth
-)(SignIn);
+export default connect(mapStateToProps, mapDispatchToProps)(SignIn);

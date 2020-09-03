@@ -40,6 +40,7 @@ const App = (props) => {
           <Route path="/checkout" component={asyncCheckout} />
           <Route path='/orders' component={asyncOrders} />
           <Route path="/logout" component={Logout} />
+          <Redirect to="/" />
         </>
       )
     }
@@ -48,7 +49,11 @@ const App = (props) => {
       <>
         <Layout>
           <Switch>
-            <Suspense fallback={<p>Loading...</p>}>{routes}</Suspense>
+            <Suspense 
+              fallback={<p>Loading...</p>}
+            >
+              {routes}
+            </Suspense>
           </Switch>
         </Layout>
       </>
