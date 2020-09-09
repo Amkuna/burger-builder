@@ -1,11 +1,12 @@
 import React, {useEffect, Suspense} from 'react';
 import Layout from './hoc/Layout/Layout';
 import BurgerBuilder from './containers/BurgerBuilder/BurgerBuilder';
-import {Route, Switch, withRouter, Redirect} from 'react-router-dom';
+import {Route, Switch, withRouter} from 'react-router-dom';
 import Logout from './containers/Auth/Logout/Logout';
 import {connect} from 'react-redux';
 import * as actions from './store/actions/index';
 import asyncComponent from './hoc/asyncComponent/asyncComponent';
+import PrivateRoute from './PrivateRoute';
 
 // const asyncCheckout = asyncComponent(() => {
 //   return import('./containers/Checkout/Checkout');
@@ -24,37 +25,24 @@ const App = (props) => {
     onTryAutoSignup();
   }, [onTryAutoSignup])
 
-
-    let routes = (
-        <>
-          <Route path="/" exact component={BurgerBuilder} />
-          <Route path='/signin' component={asyncSignIn} />
-          <Route path='/signup' component={asyncSignUp} />
-        </>
-    )
-
-    if(props.isAuth) {
-      routes = (
-        <>
-          <Route path="/" exact component={BurgerBuilder} />
-          <Route path="/checkout" component={asyncCheckout} />
-          <Route path='/orders' component={asyncOrders} />
-          <Route path="/logout" component={Logout} />
-          <Redirect to="/" />
-        </>
-      )
-    }
-
     return (
       <>
         <Layout>
-          <Switch>
-            <Suspense 
-              fallback={<p>Loading...</p>}
-            >
-              {routes}
-            </Suspense>
-          </Switch>
+          <Suspense 
+            fallback={<p>Loading...</p>}
+          >
+            <Switch>
+              <Route path="/" exact component={BurgerBuilder} />
+              <Route path='/signin' component={asyncSignIn} />
+              <Route path='/signup' component={asyncSignUp} />
+              <Route path="/checkout" component={asyncCheckout} />
+              <PrivateRoute path='/orders' component={asyncOrders} />
+              <PrivateRoute path="/logout" component={Logout} />
+              <Route path="*">
+                Page not found
+              </Route>
+            </Switch>
+          </Suspense>
         </Layout>
       </>
     );

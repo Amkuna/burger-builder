@@ -3,7 +3,7 @@ import Button from '../../components/UI/Button/Button';
 import classes from './Auth.module.css';
 import Spinner from '../../components/UI/Spinner/Spinner';
 import Input from '../../components/UI/Input/Input';
-import {Link} from 'react-router-dom';
+import {Link, Redirect} from 'react-router-dom';
 import {connect} from 'react-redux';
 import * as actions from '../../store/actions/index';
 
@@ -20,8 +20,6 @@ const SignIn = (props) => {
     const {register, handleSubmit, errors} = useForm({
         resolver: yupResolver(schema)
     });
-
-    console.log("In SignIn.js");
 
     const authForm = {
         email: {
@@ -77,9 +75,12 @@ const SignIn = (props) => {
     }
 
     const submitHandler = (formData) => {
-        props.onAuth(formData.email, formData.password, () => {
-            props.history.push("/");
-        });
+        props.onAuth(formData.email, formData.password);
+    }
+
+    //If we got back token from our server, redirect to main page or to the page user came from
+    if(props.token) {
+        return <Redirect to={props.location.state?.from || "/"} />
     }
 
     return (
@@ -98,6 +99,7 @@ const mapStateToProps = state => {
     return {
         loading: state.auth.loading,
         error: state.auth.error,
+        token: state.auth.token,
         building: state.burgerBuilder.building,
         authRedirectPath: state.auth.authRedirectPath
     }
@@ -105,7 +107,7 @@ const mapStateToProps = state => {
 
 const mapDispatchToProps = dispatch => {
     return {
-        onAuth: (email, password, callback) => dispatch(actions.signIn(email, password, callback)),
+        onAuth: (email, password) => dispatch(actions.signIn(email, password)),
         onSetAuthRedirectPath: (path) => dispatch(actions.setAuthRedirectPath(path))
     }
 }

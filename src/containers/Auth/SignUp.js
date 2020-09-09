@@ -3,7 +3,7 @@ import Button from '../../components/UI/Button/Button';
 import classes from './Auth.module.css';
 import Spinner from '../../components/UI/Spinner/Spinner';
 import Input from '../../components/UI/Input/Input';
-import {Link} from 'react-router-dom';
+import {Link, Redirect} from 'react-router-dom';
 import {connect} from 'react-redux';
 import * as actions from '../../store/actions/index';
 
@@ -57,8 +57,12 @@ const SignUp = (props) => {
         }
     }, [building, authRedirectPath, setAuthRedirectPath]);
     
-    const submitHandler = (data) => {
-        props.onAuth(authForm.email.value, authForm.password.value, authForm.passwordConfirm.value);
+    const submitHandler = (formData) => {
+        props.onAuth(formData.email, formData.password);
+    }
+
+    if(props.token) {
+        return <Redirect to={props.location.state?.from || "/"} />
     }
 
     //Sets id as the name of the input, and config as the rest of the input's configuration
@@ -101,6 +105,7 @@ const mapStateToProps = state => {
     return {
         loading: state.auth.loading,
         error: state.auth.error,
+        token: state.auth.token,
         building: state.burgerBuilder.building,
         authRedirectPath: state.auth.authRedirectPath
     }
