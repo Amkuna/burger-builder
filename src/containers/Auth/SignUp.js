@@ -3,13 +3,14 @@ import Button from '../../components/UI/Button/Button';
 import classes from './Auth.module.css';
 import Spinner from '../../components/UI/Spinner/Spinner';
 import Input from '../../components/UI/Input/Input';
-import {Link, Redirect} from 'react-router-dom';
+import {Link} from 'react-router-dom';
 import {connect} from 'react-redux';
 import * as actions from '../../store/actions/index';
 
 import {useForm} from 'react-hook-form';
 import {yupResolver} from '@hookform/resolvers';
 import * as yup from 'yup';
+import {showLoading, hideLoading} from 'react-redux-loading-bar';
 
 const schema = yup.object().shape({
     email: yup.string().required("Required field").email("Please enter a valid email"),
@@ -18,7 +19,7 @@ const schema = yup.object().shape({
 })
 
 const SignUp = (props) => {
-    const {register, handleSubmit, errors} = useForm({
+    const {register, handleSubmit, errors, setError} = useForm({
         resolver: yupResolver(schema)
     });
 
@@ -56,13 +57,27 @@ const SignUp = (props) => {
             setAuthRedirectPath('/');
         }
     }, [building, authRedirectPath, setAuthRedirectPath]);
-    
-    const submitHandler = (formData) => {
-        props.onAuth(formData.email, formData.password);
-    }
 
-    if(props.token) {
-        return <Redirect to={props.location.state?.from || "/"} />
+    const submitHandler = async (formData) => {
+        props.startLoading();
+        const res = await props.onSignUp(formData.email, formData.password);
+        if(res.error) {
+            switch(res.error.message) {
+                case "EMAIL_EXISTS":
+                    setError(authForm.email.name, {
+                        message: "Email is already in use"
+                    });
+                    break;
+                default:
+                    setError(authForm.email.name, {
+                        message: "Unknown error"
+                    })
+                    break;
+            }
+        } else {
+            props.history.replace(props.location.state?.from || "/");
+        }
+        props.stopLoading();
     }
 
     //Sets id as the name of the input, and config as the rest of the input's configuration
@@ -86,17 +101,14 @@ const SignUp = (props) => {
         />
     ))
     
-    if(props.loading) {
-    }
 
     return (
         <div className={classes.Auth}>
-            {props.error && <p>{props.error.message}</p>}
-            <form onSubmit={handleSubmit(submitHandler)}>
+            <form onSubmit={handleSubmit(submitHandler)} noValidate>
                 {form}
                 <Button className={classes.SubmitBtn} btnType="Success">Sign Up</Button> 
             </form>
-            <Link to="/signin">Already have an account? Sign In instead</Link>
+            <Link to="/signin" className={classes.Instead}>Already have an account? Sign In instead</Link>
         </div>
     )
 };
@@ -113,8 +125,10 @@ const mapStateToProps = state => {
 
 const mapDispatchToProps = dispatch => {
     return {
-        onAuth: (email, password, passwordConfirm) => dispatch(actions.signUp(email, password, passwordConfirm)),
-        onSetAuthRedirectPath: (path) => dispatch(actions.setAuthRedirectPath(path))
+        onSignUp: (email, password, passwordConfirm) => dispatch(actions.signUp(email, password, passwordConfirm)),
+        onSetAuthRedirectPath: (path) => dispatch(actions.setAuthRedirectPath(path)),
+        startLoading: () => dispatch(showLoading()),
+        stopLoading: () => dispatch(hideLoading())
     }
 }
 

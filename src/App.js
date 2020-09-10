@@ -31,7 +31,7 @@ const App = (props) => {
           <Suspense 
             fallback={<p>Loading...</p>}
           >
-            <Switch>
+            <Switch location={props.locationProp}>
               <Route path="/" exact component={BurgerBuilder} />
               <Route path='/signin' component={asyncSignIn} />
               <Route path='/signup' component={asyncSignUp} />

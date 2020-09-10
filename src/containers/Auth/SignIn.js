@@ -3,13 +3,14 @@ import Button from '../../components/UI/Button/Button';
 import classes from './Auth.module.css';
 import Spinner from '../../components/UI/Spinner/Spinner';
 import Input from '../../components/UI/Input/Input';
-import {Link, Redirect} from 'react-router-dom';
+import {Link} from 'react-router-dom';
 import {connect} from 'react-redux';
 import * as actions from '../../store/actions/index';
 
 import {useForm} from 'react-hook-form';
 import {yupResolver} from '@hookform/resolvers';
 import * as yup from 'yup';
+import {showLoading, hideLoading} from 'react-redux-loading-bar';
 
 const schema = yup.object().shape({
     email: yup.string().required("Required field").email("Please enter a valid email"),
@@ -17,7 +18,8 @@ const schema = yup.object().shape({
 })
 
 const SignIn = (props) => {
-    const {register, handleSubmit, errors} = useForm({
+
+    const {register, handleSubmit, errors, setError} = useForm({
         resolver: yupResolver(schema)
     });
 
@@ -71,26 +73,46 @@ const SignIn = (props) => {
         />
     ))
     
-    if(props.loading) {
-    }
-
-    const submitHandler = (formData) => {
-        props.onAuth(formData.email, formData.password);
-    }
-
-    //If we got back token from our server, redirect to main page or to the page user came from
-    if(props.token) {
-        return <Redirect to={props.location.state?.from || "/"} />
+    
+    const submitHandler = async (formData) => {
+        props.startLoading();
+        const res = await props.onSignIn(formData.email, formData.password);
+        if(res.error) {
+            switch(res.error.message) {
+                case "EMAIL_NOT_FOUND":
+                    setError(authForm.email.name, {
+                        message: "Email not found"
+                    });
+                    break;
+                case "INVALID_PASSWORD":
+                    setError(authForm.password.name, {
+                        message: "Invalid password"
+                    });
+                    break;
+                default:
+                    setError(authForm.email.name, {
+                        message: "Unknown error"
+                    })
+                    break;
+            }
+        } else {
+            props.history.replace(props.location.state?.from || "/");
+        }
+        props.stopLoading();
     }
 
     return (
         <div className={classes.Auth}>
-            {props.error && <p>{props.error.message}</p>}
-            <form onSubmit={handleSubmit(submitHandler)}>
+            <form onSubmit={handleSubmit(submitHandler)} noValidate>
                 {form}
-                <Button btnType="Success">Sign In</Button> 
+                <Button 
+                    btnType="Success"
+                    className={classes.SubmitBtn}
+                >
+                    Sign In
+                </Button> 
             </form>
-            <Link to="/signup">Don't have an account? Sign Up here!</Link>
+            <Link to="/signup" className={classes.Instead}>Don't have an account? Sign Up here!</Link>
         </div>
     )
 };
@@ -107,8 +129,10 @@ const mapStateToProps = state => {
 
 const mapDispatchToProps = dispatch => {
     return {
-        onAuth: (email, password) => dispatch(actions.signIn(email, password)),
-        onSetAuthRedirectPath: (path) => dispatch(actions.setAuthRedirectPath(path))
+        onSignIn: async (email, password) => dispatch(actions.signIn(email, password)),
+        onSetAuthRedirectPath: (path) => dispatch(actions.setAuthRedirectPath(path)),
+        startLoading: () => dispatch(showLoading()),
+        stopLoading: () => dispatch(hideLoading())
     }
 }
 
