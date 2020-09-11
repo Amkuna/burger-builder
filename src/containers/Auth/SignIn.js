@@ -60,20 +60,6 @@ const SignIn = (props) => {
         })
     }
 
-    let form = formElementsArray.map(formElement => (
-        <Input
-            key={formElement.id} 
-            elementType={formElement.elementType} 
-            elementConfig={formElement.elementConfig} 
-
-            name={formElement.name}
-            register={register}
-            validation={formElement.validation}
-            error={errors[formElement.name]}
-        />
-    ))
-    
-    
     const submitHandler = async (formData) => {
         props.startLoading();
         const res = await props.onSignIn(formData.email, formData.password);
@@ -100,6 +86,19 @@ const SignIn = (props) => {
         }
         props.stopLoading();
     }
+
+    const form = formElementsArray.map(formElement => (
+        <Input
+            key={formElement.id} 
+            elementType={formElement.elementType} 
+            elementConfig={formElement.elementConfig} 
+
+            name={formElement.name}
+            register={register}
+            validation={formElement.validation}
+            error={errors[formElement.name]}
+        />
+    ))
 
     return (
         <div className={classes.Auth}>

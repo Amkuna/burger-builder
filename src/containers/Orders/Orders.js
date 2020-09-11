@@ -5,6 +5,7 @@ import withErrorHandler from '../../hoc/WithErrorHandler/WithErrorHandler';
 import * as actions from '../../store/actions/index';
 import {connect} from 'react-redux';
 import Spinner from '../../components/UI/Spinner/Spinner';
+import classes from './Orders.module.css';
 
 const Orders = (props) => {
     const {onFetchOrders} = props;
@@ -14,8 +15,9 @@ const Orders = (props) => {
     }, [onFetchOrders, props.token, props.userId])
 
     let orders = <Spinner />;
+    console.log("Orders: ", props.orders);
     if(!props.loading) {
-        orders = (
+        orders = props.orders.length > 0 ? (
             <div>
                 {props.orders.map(order => (
                     <Order key={order.id}
@@ -23,6 +25,10 @@ const Orders = (props) => {
                         price={order.price}
                     />
                 ))}
+            </div>
+        ) : (
+            <div className={classes.NoResults}>
+                <h2>We've come up emtpy!</h2>
             </div>
         )
     }

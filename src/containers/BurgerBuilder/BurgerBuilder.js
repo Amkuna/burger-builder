@@ -119,23 +119,4 @@ export const BurgerBuilder = props => {
     );
 }
 
-// const mapStateToProps = state => {
-//     return {
-//         ingredients: state.burgerBuilder.ingredients,
-//         totalPrice: state.burgerBuilder.totalPrice,
-//         error: state.burgerBuilder.error,
-//         isAuth: state.auth.token !== null
-//     }
-// }
-
-// const mapDispatchToProps = dispatch => {
-//     return {
-//         onIngredientAdded: (ingredient) => dispatch(burgerBuilderActions.addIngredient(ingredient)),
-//         onIngredientRemoved: (ingredient) => dispatch(burgerBuilderActions.removeIngredient(ingredient)),
-//         onInitIngredients: () => dispatch(burgerBuilderActions.initIngredients()),
-//         onInitPurchase: () => dispatch(burgerBuilderActions.purchaseInit()),
-//         onSetAuthRedirectPath: (path) => dispatch(burgerBuilderActions.setAuthRedirectPath(path))
-//     }
-// }
-
 export default WithErrorHandler(BurgerBuilder, axios);
